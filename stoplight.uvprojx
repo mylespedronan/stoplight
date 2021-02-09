@@ -438,6 +438,11 @@
               <FileType>5</FileType>
               <FilePath>.\inc\FreeRTOSConfig.h</FilePath>
             </File>
+            <File>
+              <FileName>semphr.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\FreeRTOS\Source\include\semphr.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

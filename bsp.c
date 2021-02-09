@@ -4,6 +4,9 @@
  * I/O functions of the Tiva Launchpad.
  */
  
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "bsp.h"
 #include "TM4C123GH6PM.h"
 
@@ -11,6 +14,8 @@
 #define PIN1	(1U << 1)
 #define PIN2	(1U << 2)
 #define PIN3	(1U << 3)
+
+static SemaphoreHandle_t xMutex;
 
 void BSP_init(void){
 	/* GPIO Control */
@@ -24,6 +29,8 @@ void BSP_init(void){
 	/* Set digital enable of GPIO Port D and Port E as output */
 	GPIOD_AHB->DEN |= ((PIN1) | (PIN2) | (PIN3));
 	GPIOE_AHB->DEN |= ((PIN1) | (PIN2) | (PIN3));	
+	
+	xMutex = xSemaphoreCreateMutex();
 }
 
 /* Stoplight 1 (S1) */
@@ -51,6 +58,39 @@ void greenOffS1(void){
 	GPIOD_AHB->DATA_Bits[PIN3] = 0U;
 }
 
+void redToggleS1(const TickType_t delay){
+	GPIOD_AHB->DATA_Bits[PIN1] |= PIN1;
+	vTaskDelay(delay);
+	GPIOD_AHB->DATA_Bits[PIN1] = 0U;	
+}
+
+void yellowToggleS1(const TickType_t delay){
+	GPIOD_AHB->DATA_Bits[PIN2] |= PIN2;
+	vTaskDelay(delay);
+	GPIOD_AHB->DATA_Bits[PIN2] = 0U;
+}
+
+void greenToggleS1(const TickType_t delay){
+	GPIOD_AHB->DATA_Bits[PIN3] |= PIN3;
+	vTaskDelay(delay);
+	GPIOD_AHB->DATA_Bits[PIN3] = 0U;
+}
+
+void s1Task(void){
+	if (xMutex != NULL){
+		if( xSemaphoreTake(xMutex, (TickType_t) 10) == pdTRUE){
+			redOnS2();
+			
+			greenToggleS1(5000);
+			yellowToggleS1(1000);
+			redOnS1();
+			
+			redOffS2();
+			xSemaphoreGive(xMutex);
+		}
+	}
+}
+
 /* Stoplight 2 (S2) */
 void redOnS2(void){
 	GPIOE_AHB->DATA_Bits[PIN1] |= PIN1;
@@ -76,3 +116,35 @@ void greenOffS2(void){
 	GPIOE_AHB->DATA_Bits[PIN3] = 0U;
 }
 
+void redToggleS2(const TickType_t delay){
+	GPIOE_AHB->DATA_Bits[PIN1] |= PIN1;
+	vTaskDelay(delay);
+	GPIOE_AHB->DATA_Bits[PIN1] = 0U;
+}
+
+void yellowToggleS2(const TickType_t delay){
+	GPIOE_AHB->DATA_Bits[PIN2] |= PIN2;
+	vTaskDelay(delay);
+	GPIOE_AHB->DATA_Bits[PIN2] = 0U;
+}
+
+void greenToggleS2(const TickType_t delay){
+	GPIOE_AHB->DATA_Bits[PIN3] |= PIN3;
+	vTaskDelay(delay);
+	GPIOE_AHB->DATA_Bits[PIN3] = 0U;
+}
+
+void s2Task(void){
+	if (xMutex != NULL){
+		if( xSemaphoreTake(xMutex, (TickType_t) 10) == pdTRUE){
+			redOnS1();
+			
+			greenToggleS2(5000);
+			yellowToggleS2(1000);
+			redOnS2();
+
+			redOffS1();
+			xSemaphoreGive(xMutex);
+		}
+	}
+}
