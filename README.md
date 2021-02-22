@@ -3,4 +3,5 @@ This project simulates a stoplight and a pedestrian crosswalk. The purpose of th
 
 Components:
 - Tiva Launchpad (TM4C123GH6PM)
-- LEDs (x6)
+- LEDs (x7)
+- Jumper cables
