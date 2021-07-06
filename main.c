@@ -44,32 +44,32 @@ void main_ped(void * pvParameters){
 
 int main(){
 	RTOS_init();
-	BSP_init();								// Initialize Board Support Package (BSP)
+	BSP_init();						// Initialize Board Support Package (BSP)
 	
 	/* Initialize tasks */
 	// Create task for Stoplight 1
 	xTaskCreate(main_s1,					// Name of function to implement task
-				"S1 Task", 					// Descriptive name of task
-				configMINIMAL_STACK_SIZE, 	// Number of words to allocate for task's stack
-				NULL,						// Value that will be passed into the created task as a parameter
-				2,							// Priority level
-				&xTaskS1);					// Used to pass a handle to the created task out of xTaskCreate()
+		    "S1 Task", 					// Descriptive name of task
+		    configMINIMAL_STACK_SIZE, 			// Number of words to allocate for task's stack
+		    NULL,					// Value that will be passed into the created task as a parameter
+		    2,						// Priority level
+		    &xTaskS1);					// Used to pass a handle to the created task out of xTaskCreate()
 	
 	// Create task for Stoplight 2
 	xTaskCreate(main_s2,
-				"S2 Task",
-				configMINIMAL_STACK_SIZE,
-				NULL,
-				2,
-				&xTaskS2);
+		    "S2 Task",
+		    configMINIMAL_STACK_SIZE,
+		    NULL,
+		    2,
+		    &xTaskS2);
 	
-//	// Create task for Pedestrian S1 + S2
-//	xTaskCreate(main_ped,
-//				"P Task",
-//				configMINIMAL_STACK_SIZE,
-//				NULL,
-//				3,
-//				&xTaskPS);
+	// Create task for Pedestrian S1 + S2
+	xTaskCreate(main_ped,
+		    "P Task",
+		    configMINIMAL_STACK_SIZE,
+		    NULL,
+		    3,
+		    &xTaskPS);
 				
 	/* Startup of the FreeRTOS scheduler. The program should block here */
 	vTaskStartScheduler();
