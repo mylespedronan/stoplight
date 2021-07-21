@@ -1,3 +1,2 @@
-* linguist-vendored
-*.c linguist-vendored=true
-*.html linguist-vendored=false
+# direct c
+*.* linguist-language=C
